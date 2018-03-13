@@ -44,6 +44,7 @@ resource "aws_instance" "ec2_jenkins_master" {
   key_name               = "${var.ssh_key_name}"
   monitoring             = true
   vpc_security_group_ids = ["${module.security_group_rules.jenkins_security_group_id}"]
+  subnet_id              = "${var.subnet_ids[0]}"
   tags = "${merge(map("Name", format("%s-%d", var.name, count.index+1)), map("Terraform", "true"), map("Environment", var.environment), var.tags)}"
 
   provisioner "file" {
@@ -73,6 +74,8 @@ module "security_group_rules" {
   name      = "${var.name}"
   allowed_inbound_cidr_blocks = ["${var.allowed_inbound_cidr_blocks}"]
   allowed_ssh_cidr_blocks = ["${var.allowed_ssh_cidr_blocks}"]
+  vpc_id    = "${var.vpc_id}"
+
 
   http_port = "${var.http_port}"
   https_port = "${var.https_port}"
